@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "diegel.control",
+  "name": "Control",
+  "version": "1.0.0",
+  "author": "Lukas Diegelmann",
+  "description": "Sammelt die Systemsteuerungs-Widgets in einer gemeinsamen Pille",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "Control.qml"
+  },
+  "barWidget": {
+    "displayName": "Control",
+    "description": "Beliebige Bar-Widgets in einer gemeinsamen Pille; mehrfach einsetzbar",
+    "category": "Status",
+    "allowMultiple": true,
+    "defaults": {
+      "items": [
+        "omarchy.bluetooth",
+        "omarchy.network",
+        "omarchy.audio",
+        "omarchy.monitor",
+        "omarchy.power"
+      ]
+    },
+    "schema": [
+      {
+        "key": "items",
+        "type": "array",
+        "label": "Widget-Ids in der Pille, in dieser Reihenfolge"
+      }
+    ]
+  }
+}
