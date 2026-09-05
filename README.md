@@ -7,7 +7,7 @@ Systemsymbole.
 ## Installation
 
 ```bash
-omarchy plugin add https://github.com/lukasdiegelmann/omarchy-diegel-control.git
+omarchy plugin add https://github.com/lukasdiegelmann/omarchy-diegeltheme-control.git
 ```
 
 ## Verwendung
