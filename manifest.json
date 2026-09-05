@@ -4,7 +4,7 @@
   "name": "Control",
   "version": "1.0.0",
   "author": "Lukas Diegelmann",
-  "description": "Sammelt die Systemsteuerungs-Widgets in einer gemeinsamen Pille",
+  "description": "Groups any number of bar widgets into one shared pill",
   "kinds": [
     "bar-widget"
   ],
@@ -13,7 +13,7 @@
   },
   "barWidget": {
     "displayName": "Control",
-    "description": "Beliebige Bar-Widgets in einer gemeinsamen Pille; mehrfach einsetzbar",
+    "description": "Groups any number of bar widgets into one shared pill",
     "category": "Status",
     "allowMultiple": true,
     "defaults": {
@@ -29,7 +29,7 @@
       {
         "key": "items",
         "type": "array",
-        "label": "Widget-Ids in der Pille, in dieser Reihenfolge"
+        "label": "Widget ids inside the pill, in this order"
       }
     ]
   }

@@ -3,23 +3,23 @@ import Quickshell
 import qs.Commons
 import qs.Ui
 
-// Sammel-Widget: haelt mehrere andere Bar-Widgets in EINER Pille, im selben
-// Stil wie diegeltheme.bar.tasks und diegeltheme.bar.tray.
+// Container widget: holds several other bar widgets inside ONE pill, styled
+// like diegeltheme.bar.tasks and diegeltheme.bar.tray.
 //
-// Der Trick ist, dass die Bar ihre Widgets nicht ueber Dateipfade aufloest,
-// sondern ueber die barWidgetRegistry — eine Abbildung id -> { component,
-// metadata }, die der Host jeder Bar reicht. Wer an diese Registry kommt, kann
-// dieselben Komponenten selbst instanziieren. `bar` wird von BarWidget
-// injiziert, also fuehrt der Weg dorthin ueber root.bar.
+// What makes this possible is that the bar does not resolve its widgets through
+// file paths but through the barWidgetRegistry — a map id -> { component,
+// metadata } that the host hands to every bar. Anything that can reach this
+// registry can instantiate the very same components. `bar` is injected by
+// BarWidget, so the way in is root.bar.
 BarWidget {
   id: root
   moduleName: "diegeltheme.bar.control"
 
-  // Ein Eintrag ist eine Widget-Id aus der barWidgetRegistry. Kommando-Module
-  // (`type: "command"`) gehen hier bewusst NICHT: die rendert die Bar ueber eine
-  // an ihre eigene Instanz gebundene Inline-Komponente, die ausserhalb eines
-  // Bar-Slots ins Leere greift. Die vier eigenen Skript-Module sind deshalb
-  // echte Widgets (diegeltheme.bar.cpu/vpn/gpu/watts) auf Basis von lib/CommandWidget.qml.
+  // An entry is a widget id from the barWidgetRegistry. Command modules
+  // (`type: "command"`) deliberately do NOT work here: the bar renders those
+  // through an inline component bound to its own instance, which reaches
+  // nothing outside a bar slot. The script modules are therefore real widgets
+  // (diegeltheme.bar.cpu and .gpu) built on a shared CommandWidget base.
   readonly property var fallbackItems: [
     "omarchy.agents", "omarchy.bluetooth", "omarchy.network", "omarchy.audio",
     "omarchy.monitor", "diegeltheme.bar.cpu", "diegeltheme.bar.gpu",
@@ -31,10 +31,10 @@ BarWidget {
     return (v instanceof Array && v.length > 0) ? v : root.fallbackItems
   }
 
-  // Einstellungen der eingebetteten Widgets, nach Id verschachtelt:
+  // Settings for the embedded widgets, nested by id:
   //   { "id": "diegeltheme.bar.control", "widgetSettings": { "omarchy.power": { "showPercentage": true } } }
-  // Ohne das haetten die Kinder keinen Weg mehr an ihre eigenen Optionen, weil
-  // sie in shell.json keinen eigenen Layout-Eintrag mehr haben.
+  // Without this the children would have no way to reach their own options,
+  // because they no longer have a layout entry of their own in shell.json.
   readonly property var widgetSettings: {
     var v = root.settings ? root.settings.widgetSettings : undefined
     return (v && typeof v === "object") ? v : ({})
@@ -45,37 +45,37 @@ BarWidget {
   function componentFor(id) {
     var registry = root.bar ? root.bar.barWidgetRegistry : null
     if (!registry || !registry.widgets) return null
-    // registry.revision mitlesen, damit sich diese Bindung neu auswertet, wenn
-    // sich der Katalog aendert (Plugin aktiviert, Shell-Reload).
+    // Read registry.revision so this binding re-evaluates whenever the
+    // catalogue changes (a plugin enabled, a shell reload).
     var revision = registry.revision
     var entry = registry.widgets[String(id)]
     return entry ? entry.component : null
   }
 
-  // WICHTIG: die Sichtbarkeit darf NICHT von der Breite abhaengen. QML vererbt
-  // `visible` nach unten — ein unsichtbarer Container macht seine Kinder
-  // unsichtbar, deren Breite faellt damit auf 0, und der Container bliebe fuer
-  // immer unsichtbar. Genau in diese Schleife bin ich zuerst gelaufen: alle
-  // Kinder geladen, implicitWidth 27, aber visible=false. Der Bar-Host loest es
-  // genauso: der Slot bleibt sichtbar, nur seine BREITE folgt dem Inhalt.
+  // IMPORTANT: visibility must NOT depend on the width. QML propagates
+  // `visible` downwards — an invisible container makes its children invisible,
+  // their width therefore drops to 0, and the container would stay invisible
+  // forever. That is a closed loop, and an easy one to walk into: every child
+  // loaded, implicitWidth 27, yet visible=false everywhere. The bar host solves
+  // it the same way: the slot stays visible, only its WIDTH follows the content.
   visible: !vertical
   readonly property bool hasContent: row.implicitWidth > 0
   implicitWidth: vertical ? barSize : (hasContent ? row.implicitWidth + pillPadding : 0)
   implicitHeight: vertical ? (hasContent ? row.implicitHeight + pillPadding : 0) : barSize
 
-  // Vor der Row deklariert, damit sie darunter liegt. Farbe aus der TRAGENDEN
-  // Bar abgeleitet wie bei den anderen beiden Pillen: #4A4A4A -> #686868.
+  // Declared before the Row so it paints underneath. The colour is derived
+  // from the CARRYING bar, like the other two pills: #4A4A4A -> #686868.
   Rectangle {
     id: pill
-    // Die Pille ist ein Blatt: sie unsichtbar zu schalten zieht nichts mit
-    // herunter, anders als beim Container weiter oben.
+    // The pill is a leaf: hiding it drags nothing down with it, unlike the
+    // container above.
     visible: root.hasContent
     anchors.centerIn: parent
-    // Gleiche Hoehe und damit gleicher Radius wie die aeussere Pille von
-    // diegeltheme.bar.tasks. Sie sitzt am nachlaufenden Ende der Bar, aber nicht
-    // buendig: die Bar rueckt sie um die halbe Hoehendifferenz ein
-    // (barPillInset), sodass beide Kappen KONZENTRISCH liegen und ringsum ein
-    // gleich breiter Spalt entlang der Rundung bleibt.
+    // Same height, and therefore same radius, as the outer pill of
+    // diegeltheme.bar.tasks. It sits at the trailing end of the bar but not
+    // flush: the bar insets it by half the height difference (barPillInset), so
+    // both caps are CONCENTRIC and an evenly wide gap follows the curve all the
+    // way round.
     width: root.vertical ? Math.max(1, root.barSize - Style.space(4)) : row.implicitWidth + root.pillPadding
     height: root.vertical ? row.implicitHeight + root.pillPadding : Math.max(1, root.barSize - Style.space(4))
     radius: (root.vertical ? width : height) / 2
@@ -97,18 +97,18 @@ BarWidget {
         readonly property var widgetComponent: root.componentFor(hostSlot.modelData)
         readonly property var activeItem: childLoader.item
 
-        // Genau wie ein Bar-Slot: die Breite kommt vom Kind, nicht umgekehrt.
-        // Ein unsichtbares Kind (z.B. Bluetooth ohne Adapter) faellt auf 0 und
-        // die Pille schrumpft entsprechend.
+        // Exactly like a bar slot: the width comes from the child, not the
+        // other way round. An invisible child (Bluetooth without an adapter,
+        // say) collapses to 0 and the pill shrinks accordingly.
         width: activeItem && activeItem.visible ? activeItem.implicitWidth : 0
         height: root.barSize
 
-        // moduleName wird BEWUSST nicht gesetzt: jedes Widget setzt ihn selbst
-        // (moduleName: "omarchy.network" usw.), und eine Zuweisung von aussen
-        // wuerde diese Bindung nur ueberschreiben.
-        // `root` kann hier undefiniert sein: injectProps laeuft auch verzoegert
-        // ueber Qt.callLater, und bis dahin kann der Delegate abgebaut sein —
-        // dann ist der aeussere Scope weg und jeder Zugriff wirft.
+        // moduleName is DELIBERATELY not set: every widget sets it itself
+        // (moduleName: "omarchy.network" and so on), and assigning it from the
+        // outside would only overwrite that binding.
+        // `root` can be undefined in here: injectProps also runs deferred via
+        // Qt.callLater, and by then the delegate may already be torn down —
+        // the outer scope is gone and any access throws.
         function injectProps() {
           var target = childLoader.item
           if (!target || !root) return
@@ -121,8 +121,8 @@ BarWidget {
           id: childLoader
           anchors.fill: parent
           sourceComponent: hostSlot.widgetComponent
-          // Zweimal, wie im Bar-Host: onLoaded laeuft, bevor `bar` unten in der
-          // Kette gesetzt sein kann, der callLater holt die Nachzuegler.
+          // Twice, as the bar host does it: onLoaded runs before `bar` can be
+          // set further down the chain; the callLater catches the stragglers.
           onLoaded: {
             hostSlot.injectProps()
             Qt.callLater(hostSlot.injectProps)

@@ -1,16 +1,15 @@
-# diegeltheme.bar.control — Widget-Container
+# diegeltheme.bar.control — widget container
 
-Fasst beliebige Bar-Widgets in EINER gemeinsamen Pille zusammen. Mehrfach
-einsetzbar — etwa einmal links fuer die Medienanzeige und einmal rechts fuer die
-Systemsymbole.
+Groups any number of bar widgets into one shared pill. Usable more than once —
+for instance one on the left for now-playing and one on the right for system icons.
 
-## Installation
+## Install
 
 ```bash
 omarchy plugin add https://github.com/lukasdiegelmann/omarchy-diegeltheme-control.git
 ```
 
-## Verwendung
+## Usage
 
 ```jsonc
 { "id": "diegeltheme.bar.control",
@@ -18,13 +17,12 @@ omarchy plugin add https://github.com/lukasdiegelmann/omarchy-diegeltheme-contro
   "widgetSettings": { "omarchy.power": { "showPercentage": true } } }
 ```
 
-`items` sind Widget-Ids aus der Registry; `widgetSettings` reicht die Einstellungen
-durch, die die eingebetteten Widgets sonst aus ihrem eigenen Layout-Eintrag lesen
-wuerden.
+`items` are widget ids from the registry. `widgetSettings` forwards the options an
+embedded widget would otherwise read from its own layout entry.
 
-**Nur Registry-Widgets.** Kommando-Module (`type: "command"`) gehen nicht: die rendert
-die Bar ueber eine an ihre eigene Instanz gebundene Inline-Komponente. Wer so etwas
-einbetten will, macht daraus ein richtiges Widget (siehe `diegeltheme.bar.cpu`).
+**Registry widgets only.** Command modules (`type: "command"`) will not work: the bar
+renders those through an inline component bound to its own instance, which reaches
+nothing outside a bar slot. Turn such a module into a real widget instead.
 
-Third-Party-Widgets muessen zusaetzlich in `plugins[]` der `shell.json` stehen, sonst
-registriert der Host sie nicht.
+Third-party widgets must also be listed in `plugins[]` of `shell.json`, otherwise the
+host never registers them.
