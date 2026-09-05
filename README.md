@@ -1,4 +1,4 @@
-# diegel.control — Widget-Container
+# diegeltheme.bar.control — Widget-Container
 
 Fasst beliebige Bar-Widgets in EINER gemeinsamen Pille zusammen. Mehrfach
 einsetzbar — etwa einmal links fuer die Medienanzeige und einmal rechts fuer die
@@ -13,7 +13,7 @@ omarchy plugin add https://github.com/lukasdiegelmann/omarchy-diegeltheme-contro
 ## Verwendung
 
 ```jsonc
-{ "id": "diegel.control",
+{ "id": "diegeltheme.bar.control",
   "items": ["omarchy.menu", "omarchy.bluetooth", "omarchy.network"],
   "widgetSettings": { "omarchy.power": { "showPercentage": true } } }
 ```
@@ -24,7 +24,7 @@ wuerden.
 
 **Nur Registry-Widgets.** Kommando-Module (`type: "command"`) gehen nicht: die rendert
 die Bar ueber eine an ihre eigene Instanz gebundene Inline-Komponente. Wer so etwas
-einbetten will, macht daraus ein richtiges Widget (siehe `diegel.cpu`).
+einbetten will, macht daraus ein richtiges Widget (siehe `diegeltheme.bar.cpu`).
 
 Third-Party-Widgets muessen zusaetzlich in `plugins[]` der `shell.json` stehen, sonst
 registriert der Host sie nicht.

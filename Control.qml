@@ -4,7 +4,7 @@ import qs.Commons
 import qs.Ui
 
 // Sammel-Widget: haelt mehrere andere Bar-Widgets in EINER Pille, im selben
-// Stil wie diegel.tasks und diegel.tray.
+// Stil wie diegeltheme.bar.tasks und diegeltheme.bar.tray.
 //
 // Der Trick ist, dass die Bar ihre Widgets nicht ueber Dateipfade aufloest,
 // sondern ueber die barWidgetRegistry — eine Abbildung id -> { component,
@@ -13,16 +13,16 @@ import qs.Ui
 // injiziert, also fuehrt der Weg dorthin ueber root.bar.
 BarWidget {
   id: root
-  moduleName: "diegel.control"
+  moduleName: "diegeltheme.bar.control"
 
   // Ein Eintrag ist eine Widget-Id aus der barWidgetRegistry. Kommando-Module
   // (`type: "command"`) gehen hier bewusst NICHT: die rendert die Bar ueber eine
   // an ihre eigene Instanz gebundene Inline-Komponente, die ausserhalb eines
   // Bar-Slots ins Leere greift. Die vier eigenen Skript-Module sind deshalb
-  // echte Widgets (diegel.cpu/vpn/gpu/watts) auf Basis von lib/CommandWidget.qml.
+  // echte Widgets (diegeltheme.bar.cpu/vpn/gpu/watts) auf Basis von lib/CommandWidget.qml.
   readonly property var fallbackItems: [
     "omarchy.agents", "omarchy.bluetooth", "omarchy.network", "omarchy.audio",
-    "omarchy.monitor", "diegel.cpu", "diegel.vpn", "diegel.gpu", "diegel.watts",
+    "omarchy.monitor", "diegeltheme.bar.cpu", "diegeltheme.bar.gpu",
     "omarchy.power"
   ]
 
@@ -32,7 +32,7 @@ BarWidget {
   }
 
   // Einstellungen der eingebetteten Widgets, nach Id verschachtelt:
-  //   { "id": "diegel.control", "widgetSettings": { "omarchy.power": { "showPercentage": true } } }
+  //   { "id": "diegeltheme.bar.control", "widgetSettings": { "omarchy.power": { "showPercentage": true } } }
   // Ohne das haetten die Kinder keinen Weg mehr an ihre eigenen Optionen, weil
   // sie in shell.json keinen eigenen Layout-Eintrag mehr haben.
   readonly property var widgetSettings: {
@@ -72,7 +72,7 @@ BarWidget {
     visible: root.hasContent
     anchors.centerIn: parent
     // Gleiche Hoehe und damit gleicher Radius wie die aeussere Pille von
-    // diegel.tasks. Sie sitzt am nachlaufenden Ende der Bar, aber nicht
+    // diegeltheme.bar.tasks. Sie sitzt am nachlaufenden Ende der Bar, aber nicht
     // buendig: die Bar rueckt sie um die halbe Hoehendifferenz ein
     // (barPillInset), sodass beide Kappen KONZENTRISCH liegen und ringsum ein
     // gleich breiter Spalt entlang der Rundung bleibt.
